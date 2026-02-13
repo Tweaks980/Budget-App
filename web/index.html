@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chase CSV → Monthly Category Table</title>
+  <link rel="stylesheet" href="./styles.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+  <header class="wrap">
+    <h1>Chase CSV → Monthly Category Table</h1>
+    <p class="muted">
+      Upload a Chase transaction CSV. We'll categorize each charge using <code>preferences.json</code>,
+      then build a month-by-month spending table.
+    </p>
+  </header>
+
+  <main class="wrap grid">
+    <section class="card">
+      <h2>1) Load files</h2>
+
+      <div class="field">
+        <label>Chase CSV</label>
+        <input id="csvFile" type="file" accept=".csv,text/csv"/>
+      </div>
+
+      <details class="mt">
+        <summary>Advanced: replace categories / preferences JSON</summary>
+        <div class="field mt">
+          <label>expense_categories.json (optional)</label>
+          <input id="categoriesFile" type="file" accept=".json,application/json"/>
+        </div>
+        <div class="field">
+          <label>preferences.json (optional)</label>
+          <input id="prefsFile" type="file" accept=".json,application/json"/>
+        </div>
+      </details>
+
+      <div class="row mt">
+        <button id="loadBtn" class="primary" disabled>Process CSV</button>
+        <button id="clearBtn" class="ghost" disabled>Clear</button>
+      </div>
+
+      <div class="row mt">
+        <label class="inline">
+          <input id="debitsOnly" type="checkbox" checked/>
+          Count spending as debits only (ignore credits/refunds)
+        </label>
+      </div>
+
+      <div class="row">
+        <label class="inline">
+          <input id="ignorePayments" type="checkbox" checked/>
+          Ignore payments like <code>Payment Thank You - Web</code>
+        </label>
+      </div>
+
+      <div class="row mt">
+        <label class="inline">
+          Year:
+          <select id="yearSelect" disabled></select>
+        </label>
+      </div>
+
+      <p id="status" class="muted mt"></p>
+    </section>
+
+    <section class="card">
+      <h2>2) Unmatched merchants</h2>
+      <p class="muted">
+        If a merchant description isn't in <code>preferences.json</code>, pick a category (or type it) and we'll update it.
+      </p>
+
+      <div id="unmatched"></div>
+
+      <div class="row mt">
+        <button id="downloadPrefsBtn" disabled>Download updated preferences.json</button>
+        <button id="saveLocalBtn" disabled>Auto-save in browser (localStorage)</button>
+      </div>
+
+      <p class="muted mt small">
+        Browser auto-save stores mappings on this device only. If you want the JSON to auto-save to the file on disk,
+        use the included Streamlit desktop-local app (see README).
+      </p>
+    </section>
+
+    <section class="card span-2">
+      <h2>3) Monthly spending table</h2>
+      <div id="tableWrap" class="tableWrap muted">Upload a CSV to see results.</div>
+      <div id="drilldown" class="mt"></div>
+    </section>
+  </main>
+
+  <footer class="wrap muted small mt">
+    Tip: run a local server (recommended) from the <code>web</code> folder:<br/>
+    <code>python3 -m http.server 5173</code> then open <code>http://localhost:5173</code>
+  </footer>
+
+  <script src="./app.js" type="module"></script>
+</body>
+</html>
